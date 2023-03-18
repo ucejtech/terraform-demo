@@ -1,61 +1,73 @@
-# name: GitHub Actions Demo
-# run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-# on: [push]
-# jobs:
-#   Explore-GitHub-Actions:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-#       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-#       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-#       - name: Check out repository code
-#         uses: actions/checkout@v3
-#       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-#       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-#       - name: List files in the repository
-#         run: |
-#           ls ${{ github.workspace }}
-#       - run: echo "🍏 This job's status is ${{ job.status }}."
+name: "Terraform"
 
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
+jobs:
+  terraform:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          # terraform_version: 0.13.0:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-# name: Terraform Workflow
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
 
-# on:
-#   push:
-#     branches:
-#       - main
+      - name: Terraform Init
+        id: init
+        run: terraform init
 
-# jobs:
-#   terraform:
-#     runs-on: ubuntu-latest
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
 
-#     steps:
-#     - uses: actions/checkout@v2
+      - name: Terraform Plan
+        id: plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
 
-#     - name: Install Terraform
-#       run: |
-#         wget https://releases.hashicorp.com/terraform/1.1.5/terraform_1.1.5_linux_amd64.zip
-#         unzip terraform_1.1.5_linux_amd64.zip
-#         sudo mv terraform /usr/local/bin/
-#         terraform --version
+      - name: Update Pull Request
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: ${{ steps.plan.outputs.stdout }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            <details><summary>Show Plan</summary>
+            \`\`\`terraform\n
+            ${process.env.PLAN}
+            \`\`\`
+            </details>
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
 
-#     - name: Terraform Init
-#       run: terraform init
-
-#     - name: Terraform Plan
-#       id: plan
-#       run: terraform plan -out=tfplan
-
-#     - name: Terraform Apply
-#       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-#       uses: peter-evans/create-pull-request@v3
-#       with:
-#         commit-message: "Automated Terraform Apply"
-#         title: "Automated Terraform Apply"
-#         body: "This is an automated pull request to apply Terraform changes."
-#         branch: "terraform-apply"
-#         path: "."
-#         delete-branch: true
-#         token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false
