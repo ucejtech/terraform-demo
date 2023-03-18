@@ -3,11 +3,13 @@
 
 terraform {
 
-  # cloud {
-  #   workspaces {
-  #     name = "learn-terraform-eks"
-  #   }
-  # }
+cloud {
+    organization = "ucejtech"
+
+    workspaces {
+      name = "github-actions-demo"
+    }
+  }
 
   required_providers {
     aws = {
