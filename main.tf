@@ -4,14 +4,14 @@ provider "aws" {
 
 data "aws_availability_zones" "available" {}
 locals {
-  cluster_name = "ucejtech-eks-test"
+  cluster_name = "${var.name}-eks-test"
 }
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "3.19.0"
 
-  name = "education-vpc"
+  name = "${var.name}-vpc"
 
   cidr = "10.0.0.0/16"
   azs  = slice(data.aws_availability_zones.available.names, 0, 3)
@@ -105,8 +105,10 @@ module "kubernetes" {
   cluster_name          = module.eks.cluster_name
   certificate_authority = module.eks.cluster_certificate_authority_data
   cluster_endpoint      = module.eks.cluster_endpoint
+  name                  = var.name
 }
 
 module "nginx" {
   source = "./modules/nginx"
+  name   = var.name
 }

@@ -2,9 +2,9 @@
 
 resource "kubernetes_deployment" "ucejtech_nginx" {
   metadata {
-    name = "ucejtech-nginx"
+    name = "${var.name}-nginx"
     labels = {
-      App = "ucejtechnginxtest"
+      App = "${var.name}nginxtest"
     }
   }
 
@@ -12,19 +12,19 @@ resource "kubernetes_deployment" "ucejtech_nginx" {
     replicas = 2
     selector {
       match_labels = {
-        App = "ucejtechnginxtest"
+        App = "${var.name}nginxtest"
       }
     }
     template {
       metadata {
         labels = {
-          App = "ucejtechnginxtest"
+          App = "${var.name}nginxtest"
         }
       }
       spec {
         container {
           image = "nginx:1.7.8"
-          name  = "ucejtechnginxtest"
+          name  = "${var.name}nginxtest"
 
           port {
             container_port = 80
