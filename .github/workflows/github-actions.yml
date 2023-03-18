@@ -1,0 +1,61 @@
+# name: GitHub Actions Demo
+# run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+# on: [push]
+# jobs:
+#   Explore-GitHub-Actions:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+#       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+#       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+#       - name: Check out repository code
+#         uses: actions/checkout@v3
+#       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+#       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+#       - name: List files in the repository
+#         run: |
+#           ls ${{ github.workspace }}
+#       - run: echo "🍏 This job's status is ${{ job.status }}."
+
+
+
+
+# name: Terraform Workflow
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   terraform:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - uses: actions/checkout@v2
+
+#     - name: Install Terraform
+#       run: |
+#         wget https://releases.hashicorp.com/terraform/1.1.5/terraform_1.1.5_linux_amd64.zip
+#         unzip terraform_1.1.5_linux_amd64.zip
+#         sudo mv terraform /usr/local/bin/
+#         terraform --version
+
+#     - name: Terraform Init
+#       run: terraform init
+
+#     - name: Terraform Plan
+#       id: plan
+#       run: terraform plan -out=tfplan
+
+#     - name: Terraform Apply
+#       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+#       uses: peter-evans/create-pull-request@v3
+#       with:
+#         commit-message: "Automated Terraform Apply"
+#         title: "Automated Terraform Apply"
+#         body: "This is an automated pull request to apply Terraform changes."
+#         branch: "terraform-apply"
+#         path: "."
+#         delete-branch: true
+#         token: ${{ secrets.GITHUB_TOKEN }}
