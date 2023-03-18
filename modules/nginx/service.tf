@@ -1,6 +1,6 @@
 resource "kubernetes_service" "ucejtech_nginx_service" {
   metadata {
-    name = "ucejtech-nginx-service"
+    name = "${var.name}-nginx-service"
   }
   spec {
     selector = {

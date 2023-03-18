@@ -9,3 +9,5 @@ variable "certificate_authority" {
 variable "cluster_endpoint" {
   # module.eks.cluster_endpoint
 }
+
+variable "name" {}
