@@ -3,7 +3,7 @@
 
 terraform {
 
-cloud {
+  cloud {
     organization = "ucejtech"
 
     workspaces {
@@ -22,7 +22,5 @@ cloud {
       version = ">= 2.16.1"
     }
   }
-
-  required_version = "~> 1.3"
 }
 
