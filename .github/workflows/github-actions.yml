@@ -10,7 +10,7 @@ env:
   DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
   DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
   DOCKER_HUB_REPO: ${{ secrets.DOCKER_HUB_REPO }}
-  TAG: latest
+  TAG: ${{ github.sha }}
 
 jobs:
   terraform:
