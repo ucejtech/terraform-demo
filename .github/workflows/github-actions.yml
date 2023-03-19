@@ -29,9 +29,8 @@ jobs:
           context: apps/server
           push: true
           tags: ${{ env.DOCKER_HUB_REPO }}/dalle-server:${{ env.TAG }}
-        env:
-          DOCKER_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
-          DOCKER_PASSWORD: ${{ env.DOCKER_HUB_PASSWORD }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: Build & push Dalle Client Image
         uses: docker/build-push-action@v2
@@ -40,9 +39,8 @@ jobs:
           context: apps/client
           push: true
           tags: ${{ env.DOCKER_HUB_REPO }}/dalle-client:${{ env.TAG }}
-        env:
-          DOCKER_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
-          DOCKER_PASSWORD: ${{ env.DOCKER_HUB_PASSWORD }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
