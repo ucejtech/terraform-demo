@@ -3,7 +3,7 @@ resource "kubernetes_service" "dalleserver" {
     name = "dalleserver-service"
 
     labels = {
-      "io.kompose.service" = "dalleserver"
+      "App" = "dalleserver"
     }
   }
 
@@ -15,7 +15,7 @@ resource "kubernetes_service" "dalleserver" {
     }
 
     selector = {
-      "io.kompose.service" = kubernetes_deployment.dalleserver.spec.0.template.metadata[0].labels["io.kompose.service"]
+      "App" = kubernetes_deployment.dalleserver.spec.0.template.0.metadata[0].labels.App
     }
   }
 }

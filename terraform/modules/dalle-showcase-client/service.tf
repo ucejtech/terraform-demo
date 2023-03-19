@@ -3,7 +3,7 @@ resource "kubernetes_service" "dalleclient" {
     name = "dalleclient-service"
 
     labels = {
-      "io.kompose.service" = "dalleclient"
+      "App" = "dalleclient"
     }
   }
 
@@ -15,7 +15,7 @@ resource "kubernetes_service" "dalleclient" {
     }
 
     selector = {
-      "io.kompose.service" = "dalleclient"
+      "App" = kubernetes_deployment.dalleclient.spec.0.template.0.metadata[0].labels.App
     }
   }
 }

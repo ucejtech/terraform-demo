@@ -106,17 +106,23 @@ resource "aws_eks_addon" "ebs-csi" {
   }
 }
 
-# module "nginx" {
-#   source                = "./modules/nginx"
-#   cluster_name          = module.eks.cluster_name
-#   certificate_authority = module.eks.cluster_certificate_authority_data
-#   cluster_endpoint      = module.eks.cluster_endpoint
-#   name                  = var.name
-# }
+module "nginx" {
+  source                = "./modules/nginx"
+  cluster_name          = module.eks.cluster_name
+  certificate_authority = module.eks.cluster_certificate_authority_data
+  cluster_endpoint      = module.eks.cluster_endpoint
+  name                  = var.name
+}
 
 
 module "dalle_showcase_server" {
   source                = "./modules/dalle-showcase-server"
+  DOCKER_HUB_REPO       = var.DOCKER_HUB_REPO
+  CLOUDINARY_API_KEY    = var.CLOUDINARY_API_KEY
+  CLOUDINARY_API_SECRET = var.CLOUDINARY_API_SECRET
+  OPENAI_API_KEY        = var.OPENAI_API_KEY
+  CLOUDINARY_CLOUD_NAME = var.CLOUDINARY_CLOUD_NAME
+  MONGODB_URL           = var.MONGODB_URL
   cluster_name          = module.eks.cluster_name
   certificate_authority = module.eks.cluster_certificate_authority_data
   cluster_endpoint      = module.eks.cluster_endpoint
@@ -125,6 +131,7 @@ module "dalle_showcase_server" {
 
 module "dalle_showcase_client" {
   source                = "./modules/dalle-showcase-client"
+  DOCKER_HUB_REPO       = var.DOCKER_HUB_REPO
   cluster_name          = module.eks.cluster_name
   certificate_authority = module.eks.cluster_certificate_authority_data
   cluster_endpoint      = module.eks.cluster_endpoint

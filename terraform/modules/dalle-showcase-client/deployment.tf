@@ -12,7 +12,7 @@ provider "kubernetes" {
       "eks",
       "get-token",
       "--cluster-name",
-      data.aws_eks_cluster.k8s_cluster.cluster_name
+      var.cluster_name
     ]
   }
 }
@@ -22,7 +22,7 @@ resource "kubernetes_deployment" "dalleclient" {
     name = "dalleclient"
 
     labels = {
-      "io.kompose.service" = "dalleclient"
+      "App" = "dalleclient"
     }
   }
 
@@ -31,14 +31,14 @@ resource "kubernetes_deployment" "dalleclient" {
 
     selector {
       match_labels = {
-        "io.kompose.service" = "dalleclient"
+        "App" = "dalleclient"
       }
     }
 
     template {
       metadata {
         labels = {
-          "io.kompose.service" = "dalleclient"
+          "App" = "dalleclient"
         }
       }
 

@@ -12,7 +12,7 @@ provider "kubernetes" {
       "eks",
       "get-token",
       "--cluster-name",
-      data.aws_eks_cluster.k8s_cluster.cluster_name
+      var.cluster_name
     ]
   }
 }
@@ -21,20 +21,20 @@ resource "kubernetes_deployment" "dalleserver" {
   metadata {
     name = "dalleserver"
     labels = {
-      "io.kompose.service" = "dalleserver"
+      "App" = "dalleserver"
     }
   }
   spec {
     replicas = 2
     selector {
       match_labels = {
-        "io.kompose.service" = "dalleserver"
+        "App" = "dalleserver"
       }
     }
     template {
       metadata {
         labels = {
-          "io.kompose.service" = "dalleserver"
+          "App" = "dalleserver"
         }
       }
       spec {
