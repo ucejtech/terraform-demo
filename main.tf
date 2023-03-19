@@ -3,8 +3,14 @@ provider "aws" {
 }
 
 data "aws_availability_zones" "available" {}
+
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+}
+
 locals {
-  cluster_name = "${var.name}-eks-test"
+  cluster_name = "${var.name}-eks-${random_string.suffix.result}"
 }
 
 module "vpc" {
@@ -100,15 +106,10 @@ resource "aws_eks_addon" "ebs-csi" {
   }
 }
 
-module "kubernetes" {
-  source                = "./modules/k8s"
+module "nginx" {
+  source                = "./modules/nginx"
   cluster_name          = module.eks.cluster_name
   certificate_authority = module.eks.cluster_certificate_authority_data
   cluster_endpoint      = module.eks.cluster_endpoint
   name                  = var.name
-}
-
-module "nginx" {
-  source = "./modules/nginx"
-  name   = var.name
 }
