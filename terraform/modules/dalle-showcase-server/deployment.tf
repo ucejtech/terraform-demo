@@ -25,7 +25,7 @@ resource "kubernetes_deployment" "dalleserver" {
     }
   }
   spec {
-    replicas = 2
+    replicas = 1
     selector {
       match_labels = {
         "App" = "dalleserver"

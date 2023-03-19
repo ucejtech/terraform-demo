@@ -7,7 +7,7 @@ terraform {
     organization = "ucejtech"
 
     workspaces {
-      name = "github-actions-demo"
+      name = "terraform-demo"
     }
   }
 

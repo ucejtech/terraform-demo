@@ -59,7 +59,7 @@ module "eks" {
     one = {
       name = "node-group-1"
 
-      instance_types = ["t3.small"]
+      instance_types = ["t3.medium"]
 
       min_size     = 1
       max_size     = 3
@@ -69,7 +69,7 @@ module "eks" {
     two = {
       name = "node-group-2"
 
-      instance_types = ["t3.small"]
+      instance_types = ["t3.medium"]
 
       min_size     = 1
       max_size     = 2
@@ -106,15 +106,6 @@ resource "aws_eks_addon" "ebs-csi" {
   }
 }
 
-module "nginx" {
-  source                = "./modules/nginx"
-  cluster_name          = module.eks.cluster_name
-  certificate_authority = module.eks.cluster_certificate_authority_data
-  cluster_endpoint      = module.eks.cluster_endpoint
-  name                  = var.name
-}
-
-
 module "dalle_showcase_server" {
   source                = "./modules/dalle-showcase-server"
   DOCKER_HUB_REPO       = var.DOCKER_HUB_REPO
@@ -137,3 +128,12 @@ module "dalle_showcase_client" {
   cluster_endpoint      = module.eks.cluster_endpoint
   name                  = var.name
 }
+
+
+# module "nginx" {
+#   source                = "./modules/nginx"
+#   cluster_name          = module.eks.cluster_name
+#   certificate_authority = module.eks.cluster_certificate_authority_data
+#   cluster_endpoint      = module.eks.cluster_endpoint
+#   name                  = var.name
+# }

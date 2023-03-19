@@ -11,7 +11,7 @@ resource "kubernetes_service" "dalleserver" {
     port {
       name        = "http"
       port        = 3000
-      target_port = "8080"
+      target_port = 8080
     }
 
     selector = {
