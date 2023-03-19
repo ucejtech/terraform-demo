@@ -6,6 +6,12 @@ on:
       - main
   pull_request:
 
+env:
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+  DOCKER_HUB_REPO: ${{ secrets.DOCKER_HUB_REPO }}
+  TAG: latest
+
 jobs:
   terraform:
     name: "Terraform"
@@ -16,6 +22,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Build & push Dalle Server Image
+        uses: docker/build-push-action@v2
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        with:
+          context: apps/server
+          push: true
+          tags: ${{ env.DOCKER_HUB_REPO }}/dalle-server:${{ env.TAG }}
+        env:
+          DOCKER_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ env.DOCKER_HUB_PASSWORD }}
+
+      - name: Build & push Dalle Client Image
+        uses: docker/build-push-action@v2
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        with:
+          context: apps/client
+          push: true
+          tags: ${{ env.DOCKER_HUB_REPO }}/dalle-client:${{ env.TAG }}
+        env:
+          DOCKER_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ env.DOCKER_HUB_PASSWORD }}
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
@@ -24,20 +52,20 @@ jobs:
 
       - name: Terraform Format
         id: fmt
-        run: terraform fmt -check
+        run: cd terraform && terraform fmt -check
 
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: cd terraform && terraform init
 
       - name: Terraform Validate
         id: validate
-        run: terraform validate -no-color
+        run: cd terraform && terraform validate -no-color
 
       - name: Terraform Plan
         id: plan
         if: github.event_name == 'pull_request'
-        run: terraform plan -no-color -input=false
+        run: cd terraform && terraform plan -no-color -input=false
         continue-on-error: true
 
       - name: Update Pull Request
@@ -70,4 +98,4 @@ jobs:
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false
+        run: cd terraform && terraform apply -auto-approve -input=false
