@@ -106,8 +106,25 @@ resource "aws_eks_addon" "ebs-csi" {
   }
 }
 
-module "nginx" {
-  source                = "./modules/nginx"
+# module "nginx" {
+#   source                = "./modules/nginx"
+#   cluster_name          = module.eks.cluster_name
+#   certificate_authority = module.eks.cluster_certificate_authority_data
+#   cluster_endpoint      = module.eks.cluster_endpoint
+#   name                  = var.name
+# }
+
+
+module "dalle_showcase_server" {
+  source                = "./modules/dalle-showcase-server"
+  cluster_name          = module.eks.cluster_name
+  certificate_authority = module.eks.cluster_certificate_authority_data
+  cluster_endpoint      = module.eks.cluster_endpoint
+  name                  = var.name
+}
+
+module "dalle_showcase_client" {
+  source                = "./modules/dalle-showcase-client"
   cluster_name          = module.eks.cluster_name
   certificate_authority = module.eks.cluster_certificate_authority_data
   cluster_endpoint      = module.eks.cluster_endpoint

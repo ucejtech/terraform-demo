@@ -6,6 +6,12 @@ on:
       - main
   pull_request:
 
+env:
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+  DOCKER_HUB_REPO: ${{ secrets.DOCKER_HUB_REPO }}
+  TAG: latest
+
 jobs:
   terraform:
     name: "Terraform"
@@ -15,6 +21,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Build & push Dalle Server Image
+        uses: docker/build-push-action@v2
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        with:
+          context: apps/server
+          push: true
+          tags: ${{ env.DOCKER_HUB_REPO }}/dalle-server:${{ env.TAG }}
+        env:
+          DOCKER_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ env.DOCKER_HUB_PASSWORD }}
+
+      - name: Build & push Dalle Client Image
+        uses: docker/build-push-action@v2
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        with:
+          context: apps/client
+          push: true
+          tags: ${{ env.DOCKER_HUB_REPO }}/dalle-client:${{ env.TAG }}
+        env:
+          DOCKER_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
+          DOCKER_PASSWORD: ${{ env.DOCKER_HUB_PASSWORD }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
