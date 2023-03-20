@@ -4,7 +4,20 @@ resource "kubernetes_config_map" "nginx_config" {
   }
 
   data = {
-    "nginx.conf" = "server {\n    listen 80;\n    root /srv/www/static;\n    \n    location / {\n        proxy_pass http://dalleclient-service:8000;\n    }\n    location /api {\n        proxy_pass http://dalleserver-service:3000;\n    }\n}\n"
+    "nginx.conf" = <<EOT
+                server {
+                  listen 80;
+
+                  location / {
+                    proxy_set_header Host $host;
+                    proxy_pass http://dalleclient-service:8000;
+                  }
+                  location /api {
+                    proxy_set_header Host $host;
+                    proxy_pass http://dalleserver-service:3000;
+                  }
+                }
+                EOT
   }
 }
 
