@@ -55,7 +55,7 @@ resource "kubernetes_deployment" "dalleserver" {
 
 resource "kubernetes_service" "dalleserver" {
   metadata {
-    name = "dalleserver-service"
+    name = "dalle-server-service"
 
     labels = {
       "App" = "dalleserver"

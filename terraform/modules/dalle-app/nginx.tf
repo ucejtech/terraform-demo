@@ -10,11 +10,11 @@ resource "kubernetes_config_map" "nginx_config" {
 
                   location / {
                     proxy_set_header Host $host;
-                    proxy_pass http://dalleclient-service:8000;
+                    proxy_pass http://dalle-client-service:8000;
                   }
                   location /api {
                     proxy_set_header Host $host;
-                    proxy_pass http://dalleserver-service:3000;
+                    proxy_pass http://dalle-server-service:3000;
                   }
                 }
                 EOT
