@@ -7,7 +7,7 @@ terraform {
     organization = "ucejtech"
 
     workspaces {
-      name = "terraform-demo"
+      name = "dalle-terraform"
     }
   }
 

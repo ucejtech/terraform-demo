@@ -78,7 +78,6 @@ module "eks" {
   }
 }
 
-
 # https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/ 
 data "aws_iam_policy" "ebs_csi_policy" {
   arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
@@ -106,8 +105,8 @@ resource "aws_eks_addon" "ebs-csi" {
   }
 }
 
-module "dalle_showcase_server" {
-  source                = "./modules/dalle-showcase-server"
+module "dalle_app" {
+  source                = "./modules/dalle-app"
   DOCKER_HUB_REPO       = var.DOCKER_HUB_REPO
   CLOUDINARY_API_KEY    = var.CLOUDINARY_API_KEY
   CLOUDINARY_API_SECRET = var.CLOUDINARY_API_SECRET
@@ -119,16 +118,6 @@ module "dalle_showcase_server" {
   cluster_endpoint      = module.eks.cluster_endpoint
   name                  = var.name
 }
-
-module "dalle_showcase_client" {
-  source                = "./modules/dalle-showcase-client"
-  DOCKER_HUB_REPO       = var.DOCKER_HUB_REPO
-  cluster_name          = module.eks.cluster_name
-  certificate_authority = module.eks.cluster_certificate_authority_data
-  cluster_endpoint      = module.eks.cluster_endpoint
-  name                  = var.name
-}
-
 
 # module "nginx" {
 #   source                = "./modules/nginx"

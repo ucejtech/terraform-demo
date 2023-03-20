@@ -1,22 +1,3 @@
-data "aws_eks_cluster" "k8s_cluster" {
-  name = var.cluster_name
-}
-
-provider "kubernetes" {
-  host                   = var.cluster_endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.k8s_cluster.certificate_authority[0].data)
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    command     = "aws"
-    args = [
-      "eks",
-      "get-token",
-      "--cluster-name",
-      var.cluster_name
-    ]
-  }
-}
-
 resource "kubernetes_deployment" "dalleclient" {
   metadata {
     name = "dalleclient"
@@ -55,6 +36,31 @@ resource "kubernetes_deployment" "dalleclient" {
         restart_policy = "Always"
       }
     }
+  }
+}
+
+resource "kubernetes_service" "dalleclient" {
+  metadata {
+    name = "dalleclient-service"
+
+    labels = {
+      "App" = "dalleclient"
+    }
+  }
+
+  spec {
+    port {
+      name        = "http"
+      port        = 8000
+      target_port = 80
+    }
+
+    selector = {
+      "App" = kubernetes_deployment.dalleclient.spec.0.template.0.metadata[0].labels.App
+    }
+
+
+    type = "ClusterIP"
   }
 }
 
