@@ -13,7 +13,7 @@ env:
   TAG: latest
 
 jobs:
-  terraform:
+  dalleapp:
     name: "Terraform"
     runs-on: ubuntu-latest
     permissions:
@@ -112,6 +112,7 @@ jobs:
 
   sock-shop:
     name: "Sock Shop Setup & Deploy"
+    needs: dalleapp
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
