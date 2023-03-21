@@ -113,11 +113,3 @@ module "dalle_app" {
   cluster_endpoint      = module.eks.cluster_endpoint
   name                  = var.name
 }
-
-# module "nginx" {
-#   source                = "./modules/nginx"
-#   cluster_name          = module.eks.cluster_name
-#   certificate_authority = module.eks.cluster_certificate_authority_data
-#   cluster_endpoint      = module.eks.cluster_endpoint
-#   name                  = var.name
-# }
