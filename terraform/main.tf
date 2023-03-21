@@ -4,13 +4,8 @@ provider "aws" {
 
 data "aws_availability_zones" "available" {}
 
-resource "random_string" "suffix" {
-  length  = 8
-  special = false
-}
-
 locals {
-  cluster_name = "${var.name}-eks-${random_string.suffix.result}"
+  cluster_name = "${var.name}-eks-cluster"
 }
 
 module "vpc" {
